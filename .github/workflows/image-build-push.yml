@@ -62,33 +62,37 @@ jobs:
         run: |
           docker build \
             -f ${{ matrix.dockerfile }} \
-            -t ${{ matrix.service }}:${IMAGE_TAG} \
+            -t ${{ matrix.service }}:${{ env.IMAGE_TAG }} \
             ${{ matrix.context }}
+
+      - name: Verify Docker Image
+        run: |
+          docker images
 
       - name: Trivy Security Scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ matrix.service }}:${IMAGE_TAG}
+          image-ref: ${{ matrix.service }}:${{ env.IMAGE_TAG }}
           format: table
           exit-code: 1
           ignore-unfixed: true
           severity: HIGH,CRITICAL
 
-      - name: Tag Image
+      - name: Tag Image for ECR
         run: |
           docker tag \
-            ${{ matrix.service }}:${IMAGE_TAG} \
-            ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:${IMAGE_TAG}
+            ${{ matrix.service }}:${{ env.IMAGE_TAG }} \
+            ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:${{ env.IMAGE_TAG }}
 
       - name: Push Commit Tag
         run: |
           docker push \
-            ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:${IMAGE_TAG}
+            ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:${{ env.IMAGE_TAG }}
 
       - name: Tag Latest
         run: |
           docker tag \
-            ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:${IMAGE_TAG} \
+            ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:${{ env.IMAGE_TAG }} \
             ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:latest
 
       - name: Push Latest
@@ -100,4 +104,4 @@ jobs:
         run: |
           echo "Service    : ${{ matrix.service }}"
           echo "Repository : ${{ matrix.ecr_repo }}"
-          echo "Tag        : ${IMAGE_TAG}"
+          echo "Tag        : ${{ env.IMAGE_TAG }}"
