@@ -10,6 +10,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy service code
 COPY . .
-
+EXPOSE 5001
 # Default command (will be overridden in docker-compose)
 CMD ["python", "auth_service.py"]
