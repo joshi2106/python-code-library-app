@@ -1,4 +1,3 @@
-
 from flask import Flask, request, jsonify
 import mysql.connector
 import os
@@ -18,12 +17,12 @@ def get_db():
     )
 
 
-@app.route("/health", methods=["GET"])
+@app.route("/auth/health", methods=["GET"])
 def health():
     return jsonify({"status": "healthy"}), 200
 
 
-@app.route("/signup", methods=["POST"])
+@app.route("/auth/signup", methods=["POST"])
 def signup():
     try:
         data = request.json
@@ -47,14 +46,19 @@ def signup():
 
         logging.info("User created successfully")
 
-        return jsonify({"message": "User created"}), 201
+        return jsonify({
+            "message": "User created successfully"
+        }), 201
 
     except Exception as e:
         logging.error(str(e))
-        return jsonify({"error": str(e)}), 500
+
+        return jsonify({
+            "error": str(e)
+        }), 500
 
 
-@app.route("/signin", methods=["POST"])
+@app.route("/auth/signin", methods=["POST"])
 def signin():
     try:
         data = request.json
@@ -77,17 +81,25 @@ def signin():
 
         if user:
             return jsonify({
-                "message": "Login success",
+                "message": "Login successful",
                 "user_id": user["id"],
                 "name": user["name"]
             }), 200
 
-        return jsonify({"message": "Invalid credentials"}), 401
+        return jsonify({
+            "message": "Invalid credentials"
+        }), 401
 
     except Exception as e:
         logging.error(str(e))
-        return jsonify({"error": str(e)}), 500
+
+        return jsonify({
+            "error": str(e)
+        }), 500
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001)
+    app.run(
+        host="0.0.0.0",
+        port=5001
+    )
