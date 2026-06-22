@@ -3,7 +3,7 @@ import mysql.connector
 import os
 import logging
 
-app = Flask(**name**)
+app = Flask(__name__)
 
 logging.basicConfig(level=logging.INFO)
 
