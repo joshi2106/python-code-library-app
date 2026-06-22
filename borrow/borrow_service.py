@@ -60,12 +60,13 @@ def my_books(user_id):
 
         cursor.execute(
             """
-            SELECT b.title,
-                   b.author,
-                   br.borrow_date
+            SELECT
+                b.title,
+                b.author,
+                br.borrow_date
             FROM borrow_records br
             JOIN books b
-              ON br.book_id = b.id
+                ON br.book_id = b.id
             WHERE br.user_id = %s
             """,
             (user_id,)
@@ -76,7 +77,7 @@ def my_books(user_id):
         cursor.close()
         conn.close()
 
-        return jsonify(books)
+        return jsonify(books), 200
 
     except Exception as e:
         logging.error(str(e))
