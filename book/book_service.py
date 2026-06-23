@@ -14,7 +14,7 @@ def get_db():
         database=os.getenv("DB_NAME")
     )
 
-@app.route("/books/health", methods=["GET"])
+@app.route("/book/health", methods=["GET"])
 def health():
     return jsonify({"status": "healthy"}), 200
 
@@ -34,3 +34,5 @@ def get_books():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5002)
+
+
