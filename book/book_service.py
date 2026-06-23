@@ -24,16 +24,13 @@ def get_db():
 
 
 # ───────────────────────── HEALTH ─────────────────────────
-# IMPORTANT: ALB Target Group health check path must be set to /books/health
-# Previously was /book/health (singular) which caused 404 and unhealthy tasks
-
-@app.route("/books/health", methods=["GET"])
+# IMPORTANT: ALB Target Group health check path must be set to /book/health
+@app.route("/book/health", methods=["GET"])
 def health():
     return jsonify({"status": "healthy"}), 200
 
 
 # ───────────────────────── GET ALL BOOKS ─────────────────────────
-
 @app.route("/books", methods=["GET"])
 def get_books():
     try:
@@ -51,7 +48,6 @@ def get_books():
 
 
 # ───────────────────────── GET SINGLE BOOK ─────────────────────────
-
 @app.route("/books/<int:book_id>", methods=["GET"])
 def get_book(book_id):
     try:
