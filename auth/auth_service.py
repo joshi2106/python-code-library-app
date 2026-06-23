@@ -4,9 +4,7 @@ import os
 import logging
 
 app = Flask(__name__)
-
 logging.basicConfig(level=logging.INFO)
-
 
 def get_db():
     return mysql.connector.connect(
@@ -16,90 +14,51 @@ def get_db():
         database=os.getenv("DB_NAME")
     )
 
-
 @app.route("/auth/health", methods=["GET"])
 def health():
     return jsonify({"status": "healthy"}), 200
-
 
 @app.route("/auth/signup", methods=["POST"])
 def signup():
     try:
         data = request.json
-
         conn = get_db()
         cursor = conn.cursor(dictionary=True)
-
         cursor.execute(
             "INSERT INTO users (name, email, password) VALUES (%s, %s, %s)",
-            (
-                data["name"],
-                data["email"],
-                data["password"]
-            )
+            (data["name"], data["email"], data["password"])
         )
-
         conn.commit()
-
         cursor.close()
         conn.close()
-
-        logging.info("User created successfully")
-
-        return jsonify({
-            "message": "User created successfully"
-        }), 201
-
+        return jsonify({"message": "User created successfully"}), 201
     except Exception as e:
         logging.error(str(e))
-
-        return jsonify({
-            "error": str(e)
-        }), 500
-
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/auth/signin", methods=["POST"])
 def signin():
     try:
         data = request.json
-
         conn = get_db()
         cursor = conn.cursor(dictionary=True)
-
         cursor.execute(
             "SELECT * FROM users WHERE email=%s AND password=%s",
-            (
-                data["email"],
-                data["password"]
-            )
+            (data["email"], data["password"])
         )
-
         user = cursor.fetchone()
-
         cursor.close()
         conn.close()
-
         if user:
             return jsonify({
                 "message": "Login successful",
                 "user_id": user["id"],
                 "name": user["name"]
             }), 200
-
-        return jsonify({
-            "message": "Invalid credentials"
-        }), 401
-
+        return jsonify({"message": "Invalid credentials"}), 401
     except Exception as e:
         logging.error(str(e))
-
-        return jsonify({
-            "error": str(e)
-        }), 500
-
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(
-        host="0.0.0.0",
-        port=5001
-    )
+    app.run(host="0.0.0.0", port=5001)
