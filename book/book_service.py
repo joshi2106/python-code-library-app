@@ -25,7 +25,7 @@ def get_db():
 
 # ───────────────────────── HEALTH ─────────────────────────
 # IMPORTANT: ALB Target Group health check path must be set to /book/health
-@app.route("/book/health", methods=["GET"])
+@app.route("/books/health", methods=["GET"])
 def health():
     return jsonify({"status": "healthy"}), 200
 
